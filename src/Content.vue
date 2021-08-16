@@ -92,15 +92,13 @@
   code-snippet(name='caption-svg-base')
   code-snippet(name='caption-css')
   
-  .with-border(:style="{maxWidth: gifWidth + 'px'}")
-    svg(
-      :viewBox="`0 0 ${gifWidth} ${gifHeight}`",
-      :style="`max-width: ${gifWidth}px; max-height: ${gifHeight}px`"
-    )
-      text.caption(
-        :x='captionX'
-        :y='captionY'      
-      ) {{caption}}
+  svg.with-border(
+    :viewBox="`0 0 ${gifWidth} ${gifHeight}`",
+    :width='gifWidth', :height='gifHeight',
+    :style='{maxWidth: gifWidth, maxHeight: gifHeight}'
+  )
+    g(:style="`transform: translate(${captionX}px, ${captionY}px)`")
+      text.caption {{caption}}
 
   h3 4. Animating the caption
   p.
@@ -120,6 +118,7 @@
   
   svg.with-border(
     :viewBox="`0 0 ${gifWidth} ${gifHeight}`",
+    :width='gifWidth', :height='gifHeight',
     :style='{maxWidth: gifWidth, maxHeight: gifHeight}'
   )
     g(:style="`transform: translate(${captionX}px, ${captionY}px)`")
@@ -146,6 +145,7 @@
   svg.with-border#animated-caption(
     xmlns="http://www.w3.org/2000/svg"
     :viewBox="`0 0 ${gifWidth} ${gifHeight}`",
+    :width='gifWidth', :height='gifHeight',
     :style='{maxWidth: gifWidth, maxHeight: gifHeight}'
   )
     g(:style="`transform: translate(${captionX}px, ${captionY}px)`")
