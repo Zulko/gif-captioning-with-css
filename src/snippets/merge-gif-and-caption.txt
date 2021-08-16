@@ -1,8 +1,10 @@
 watch: {
   timeSeconds(t) {
+    const node = inlineSVGStyle.cloneWithInlineStyle(
+        this.elements.animatedCaption
+      );
+    this.captionSource = node.outerHTML;
     const { finalCanvas, captionImg } = this.elements;
-    const { width, height } = finalCanvas;
-    this.setCaptionSource();
     const frame = this.frameData.find(frame => frame.untilTime >= t);
     const context = finalCanvas.getContext('2d');
     context.drawImage(frame.canvas, 0, 0);

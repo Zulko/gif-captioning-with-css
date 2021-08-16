@@ -247,7 +247,11 @@
 
   h3 Gif and caption come together
 
-
+  p
+    :markdown-it
+      At each tick of the clock, we will now project, on a same `<canvas>`, the
+      GIF frame corresponding to the current time, and the current caption from the
+      `<img>` above:
 
   code-snippet(name='merge-gif-and-caption')
   center
@@ -451,7 +455,6 @@ export default {
         this.elements.animatedCaption
       );
       this.captionSource = node.outerHTML;
-
       const { finalCanvas, captionImg } = this.elements;
       const frame = this.frameData.find(frame => frame.untilTime >= t);
       const context = finalCanvas.getContext('2d');
