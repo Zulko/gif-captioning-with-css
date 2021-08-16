@@ -241,7 +241,7 @@
       page. On the good news side, that renderer did take into account the 3D transforms,
       although 3D transforms are not officially part of the SVG standard.
       
-      Note that the incredible [CanVG](https://www.npmjs.com/package/canvg) library will
+      Note that the great [CanVG](https://www.npmjs.com/package/canvg) library will
       render SVGs on a canvas using fonts loaded in the page. However, CanVG is limited
       to the standard SVG definition, and so won't take into account 3D transforms.
 
