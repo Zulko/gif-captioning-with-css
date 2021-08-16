@@ -99,6 +99,11 @@ const snippets = {
     content: require('raw-loader!./snippets/onRecordButtonClicked.html')
       .default,
   },
+  'project-img-onto-canvas': {
+    language: 'Javascript',
+    content: require('raw-loader!./snippets/project-img-onto-canvas.txt')
+      .default,
+  },
   'recording-main-loop': {
     language: 'Javascript',
     content: require('raw-loader!./snippets/recording-main-loop.txt').default,
@@ -129,6 +134,9 @@ export default {
     name: { type: String },
   },
   data() {
+    if (!snippets[this.name]) {
+      console.error(`${this.name} not in snippets`);
+    }
     return {
       snippets,
     };
