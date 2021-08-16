@@ -312,11 +312,9 @@
       I find it fascinating that browsers and JS frameworks have evolved to the point where
       styling a GIF with CSS is possible. I was originally so excited
       by this trick that I developed a full browser-based GIF captioning tool around it.
-      Midway through the project, I realized that the lack of font support and differences
+      Midway through the project though, I realized that the lack of font support and differences
       in 3D transform renderings between browsers were going to be frustrating,
-      so I removed CSS-based animations altogether.
-
-      But now I have a web GIF editor called [Gix](https://zulko.github.io/gix) that runs
+      so I removed CSS-based animations altogether. But now I have a web GIF editor called [Gix](https://zulko.github.io/gix) that runs
       entirely in your browser, enables all kinds of GIF mixing and cropping and captioning
       and animating, and lets you share your projects for others to remix, so you should
       check it out! 
@@ -335,8 +333,6 @@ import gifWorker from 'url-loader!./gif.worker.txt'; // eslint-disable-line
 
 export default {
   data() {
-    console.log(gifWorker);
-    console.log('bla');
     return {
       gifURL: 'https://i.imgur.com/BF230Z2.gif',
       caption: 'CHEERS!',
@@ -376,7 +372,6 @@ export default {
           cumulative: true,
         },
         (_error, frameData) => {
-          console.log({ frameData });
           let cumulativeTime = 0;
           self.frameData = frameData.map(frame => {
             cumulativeTime += frame.frameInfo.delay / 100;

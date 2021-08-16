@@ -5,7 +5,7 @@ watch: {
     this.setCaptionSource();
     const frame = this.frameData.find(frame => frame.untilTime >= t);
     const context = finalCanvas.getContext('2d');
-    context.drawImage(frame.canvas, 0, 0, width, height);
+    context.drawImage(frame.canvas, 0, 0);
     context.drawImage(captionImg, 0, 0);
   }
 }

@@ -40,7 +40,7 @@ const snippets = {
   'caption-blink-html': {
     language: 'HTML',
     content:
-      "<text class='caption' v-if='timeSeconds < 1.5'> {{ caption }} </text>",
+      "<text class='caption' v-if='timeSeconds > 0.5 && timeSeconds < 2'> {{ caption }} </text>",
   },
   captionImgSrc: {
     language: 'Javascript',

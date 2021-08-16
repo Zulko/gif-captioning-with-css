@@ -10,7 +10,6 @@ function onGifLoad() {
       cumulative: true,
     },
     (_error, frameData) => {
-      console.log({ frameData });
       let cumulativeTime = 0;
       self.frameData = frameData.map(frame => {
         cumulativeTime += frame.frameInfo.delay / 100;
