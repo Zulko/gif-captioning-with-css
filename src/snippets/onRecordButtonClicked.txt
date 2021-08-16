@@ -1,0 +1,21 @@
+onRecordButtonClicked() {
+  const self = this;
+  this.gifRenderer = new GIF({
+    workers: 4,
+    workerScript: gifWorker,
+    quality: 1,
+    width: this.gifWidth,
+    height: this.gifHeight,
+    fps: 1.0 / this.frameSeconds,
+  });
+  this.gifRenderer.on('finished', blob => {
+    self.isRendering = false;
+    const reader = new window.FileReader();
+    reader.readAsDataURL(blob);
+    reader.onloadend = () => {
+        self.renderedGif = reader.result;
+    };
+  });
+  this.isRecording = true;
+  this.timeSeconds = -0.5; // rewind and leave some time
+},

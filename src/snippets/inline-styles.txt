@@ -1,0 +1,21 @@
+function cloneWithInlineStyle(node) {
+  var newNode = node.cloneNode(false);
+  if (!["defs", "style"].some((tagName) => tagName === node.tagName)) {
+    newNode.setAttribute("style", computedStyle(node));
+  }
+  while (newNode.firstChild) {
+    newNode.removeChild(newNode.firstChild);
+  }
+  if (node && node.hasChildNodes()) {
+    var child = node.firstChild;
+    while (child) {
+      if (child.nodeType === 1 && child.nodeName !== "SCRIPT") {
+        newNode.appendChild(cloneWithInlineStyle(child));
+      } else {
+        newNode.appendChild(child.cloneNode());
+      }
+      child = child.nextSibling;
+    }
+  }
+  return newNode;
+}

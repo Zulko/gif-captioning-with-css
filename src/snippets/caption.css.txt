@@ -1,0 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+
+.caption {
+  font-size: 60px;
+  font-family: Anton;
+  fill: yellow;
+  stroke-width: 1.5;
+  stroke: black;
+  text-anchor: middle;
+  dominant-baseline: center;
+}

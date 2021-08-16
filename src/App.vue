@@ -1,28 +1,32 @@
-<template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+<template lang='pug'>
+#app
+  page-content
+  .footer.
+    Copyright Zulko 2021 - This page's code is #[a(href='#') on Github]
+    and published under the MIT licence.
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Content from './Content.vue';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
-  }
-}
+    'page-content': Content,
+  },
+};
 </script>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  width: 800px;
+  max-width: 90%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  margin: 60px auto;
+}
+.footer {
+  margin-top: 3em;
+  color: gray
 }
 </style>

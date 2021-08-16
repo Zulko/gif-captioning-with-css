@@ -1,0 +1,6 @@
+<b-input v-model='caption'/>
+<svg :viewBox="`0 0 ${gifWidth} ${gifHeight}`">
+  <g :style="`transform: translate(${captionX}px, ${captionY}px)`">
+    <text class='caption'>{{caption}}</text>
+  </g>
+</svg>

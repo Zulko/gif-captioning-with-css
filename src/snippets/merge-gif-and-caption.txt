@@ -1,0 +1,11 @@
+watch: {
+  timeSeconds(t) {
+    const { finalCanvas, captionImg } = this.elements;
+    const { width, height } = finalCanvas;
+    this.setCaptionSource();
+    const frame = this.frameData.find(frame => frame.untilTime >= t);
+    const context = finalCanvas.getContext('2d');
+    context.drawImage(frame.canvas, 0, 0, width, height);
+    context.drawImage(captionImg, 0, 0);
+  }
+}

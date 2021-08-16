@@ -1,0 +1,525 @@
+<template lang="pug">
+.content
+  h1.title In-browser GIF captioning with 3D CSS animations
+  
+  p.
+    In this page we'll add captions with 3D effects
+    to a GIF, all within your browser! And you may learn a few
+    things about CSS, GIFs and SVG rendering on the web along the way.
+  
+  img(src='finalResult.gif')
+
+  h3 TLDR; The plan
+  
+  p.
+    We will first load a GIF from the internet, and separately create a
+    CSS-animated caption in SVG format. Every few milliseconds, we'll extract
+    a frame from the GIF (that's not straightforward, but nice libraries do that very well),
+    and a snapshot from the animated SVG caption (that's the hard
+    part!). We'll then combine GIF and caption on a canvas, and send the final frames
+    to #[a(href='https://jnordberg.github.io/gif.js/') GIF.js] for
+    the GIF generation.
+  
+  img(src='the-plan.png' style='max-width: 300px;')
+  
+  h3 1. The GIF
+  p Enter a URL below or just leave the default: 
+  input(v-model='gifURL')
+  img#gif-img(
+    :src='gifURL'
+    @load="onGifLoad"
+  )
+
+  p.
+    I'll try to be fully transparent with what's happening behind the scenes.
+    This page is written with the VueJS framework (which provides easy ways to
+    manage events, variables and CSS classes, but could totally be replaced by
+    React or basic Javascript for this demo). For instance
+    here is the code for the input and image above:
+
+  code-snippet(name='user-gif-img-simple')
+
+  h3 2. Extracting frames from the GIF
+
+  p
+    :markdown-it
+      If you want to project the content of an `<img>` onto a HTML canvas,
+      you'll use the `drawImage` method:
+    
+  code-snippet(name='project-img-onto-canvas')
+
+  p
+    :markdown-it
+      Even better, if you want to project the current frame of a `<video>`, you'll
+      simply write `drawImage(myVideo)`. Now let's try the same technique to extract
+      frames from the GIF above:
+
+  code-snippet(name='gif-draw-canvas-html')
+  code-snippet(name='gif-draw-canvas-js')
+
+  p
+    :markdown-it
+      It just doesn't work, the `<canvas>` keeps showing the GIF's first frame
+
+  center
+    canvas#gif-draw-canvas(:width='gifWidth', :height='gifHeight')
+
+  p
+    :markdown-it
+      That's because when applying `drawImage`, your browser will look at the
+      GIF file data, extract the first frame, and draw it. The only workaround is
+      to use a library like [gif-frames](https://www.npmjs.com/package/gif-frames)
+      that will decode the GIF frames directly from the file, and draw them on separate canvas.  
+
+  code-snippet(name='gif-loader-html')
+  code-snippet(name='gif-loader-js')
+
+  p.
+    Now we have extracted each frame's canvas with the time at which they appear,
+    and in the process we gleaned the GIF's width, height and duration.
+
+  h3 3. The caption
+  
+  p Enter a caption below (or just leave the default): 
+  input(v-model='caption' mode='text')
+
+  p.
+    Let's embed this caption in a SVG tag with the same dimensions as the GIF.
+    Note how I am placing the text using its parent group, rather than writing
+    #[code text(x=100, y=100)]. This is so the animations can later be applied
+    to the text only and not its coordinates.
+
+  code-snippet(name='caption-svg-base')
+  code-snippet(name='caption-css')
+  
+  .with-border(:style="{maxWidth: gifWidth + 'px'}")
+    svg(
+      :viewBox="`0 0 ${gifWidth} ${gifHeight}`",
+      :style="`max-width: ${gifWidth}px; max-height: ${gifHeight}px`"
+    )
+      text.caption(
+        :x='captionX'
+        :y='captionY'      
+      ) {{caption}}
+
+  h3 4. Animating the caption
+  p.
+    First we'll create our clock, a time variable that loops through the duration
+    of the GIF:
+
+
+  code-snippet(name='clock-js')
+  code-snippet(name='clock-html')
+    
+  center
+    p Current time: {{ timeSeconds.toFixed(2) }} seconds
+  
+  p Now we can make the caption blink on and off with a simple Vue condition:
+
+  code-snippet(name='caption-blink-html')
+  
+  svg.with-border(
+    :viewBox="`0 0 ${gifWidth} ${gifHeight}`",
+    :style='{maxWidth: gifWidth, maxHeight: gifHeight}'
+  )
+    g(:style="`transform: translate(${captionX}px, ${captionY}px)`")
+      text.caption(v-if='timeSeconds > 0.5 && timeSeconds < 2') {{caption}}
+
+  p.
+    Then we'll use #[a(href="https://animate.style/") Animate.css], a very practical
+    CSS library with dozens of predefined animations. All you have to do
+    is load the library and give a certain class to an element:
+
+  code-snippet(name='animate-example-css')
+  code-snippet(name='animate-example')
+  center
+    div(style='display: block; text-align: center; width: 200px; height: 50px;')
+      h4.animate__animated.animate__heartBeat.animate__infinite BOOM
+  
+  p
+    :markdown-it
+      This will work particularly well with the VueJS framework, which lets you
+      specify `<transition>` classes for when your element appears and disappears:
+  
+  code-snippet(name='animated-svg')
+
+  svg.with-border#animated-caption(
+    xmlns="http://www.w3.org/2000/svg"
+    :viewBox="`0 0 ${gifWidth} ${gifHeight}`",
+    :style='{maxWidth: gifWidth, maxHeight: gifHeight}'
+  )
+    g(:style="`transform: translate(${captionX}px, ${captionY}px)`")
+      transition(
+        enter-active-class='animate__animated animate__jackInTheBox animate__flipInX'
+        leave-active-class='animate__animated animate__backOutUp'
+      )
+        text.caption(v-if='timeSeconds > 0.5 && timeSeconds < 2') {{caption}}
+
+  p And just like that, we have our animation.
+
+  h3 5. The hard part: SVG snapshots
+
+  p
+    :markdown-it
+      Your browser has two very distinct ways of displaying SVG images:
+      
+      - If the SVG is defined using a `<svg>` tag, the browser considers the SVG
+        and its components (`<text>`, `<g>`) as first-class components of the
+        page: it will apply CSS properties (including CSS animations, and custom
+        fonts loaded in the page), it can let you select the elements with the
+        mouse, etc. The downside is that you can't draw these elements on a canvas
+        with `drawImage()`
+      -  If the SVG is loaded as `<image src='some.svg'/>`, the browser will
+        render it using a separate SVG engine (which can understand CSS styles,
+        but won't know CSS classes and animations defined in the page), and
+        display the image's pixels in the browser. These can then be projected
+        on a canvas with `drawImage()`.
+      
+      See where this is going? We'll start from the animated `<svg>` element
+      above, and take SVG "snapshots" that we'll feed to a
+      `<img src=...>` element, so that they are canvas-compatible. 
+
+
+      The first step will be to go from the original SVG definition, which looks like this:
+      
+  code-snippet(name='text-with-classes')
+  
+  p
+    :markdown-it
+      And transform it so that it explicitly features the transformations the browser
+      is applying to the `<text>` at a given time point, and looks like this:
+
+  code-snippet(name='text-with-styles')
+  
+  p
+    :markdown-it
+      [This great blog post](https://toucantoco.com/en/tech-blog/tech/capture-your-html)
+      by Sophie Despeisse provides a function to capture all the browser-computed styles of a SVG.
+      It is done in two parts. First you ask for computed styles via the browser's `getComputedStyle`
+      method:
+
+  code-snippet(name='computed-style')
+
+  p.
+    Then you apply the method above recursively to all the components of your SVG
+    (#[code g], #[text], etc):
+  
+  code-snippet(name='inline-style')
+  
+
+  p Now let's record the computed style of the SVG above at every tick of the clock:
+
+  code-snippet(name='compute-style-loop')
+
+  p Here is a rendition of #[code captionSource]
+
+  pre
+    code.caption-source {{formattedCaptionSource}}
+
+  p
+    :markdown-it
+      For our last step, we'll feed that whole text to an `<img/>` tag as a
+      *data URL*, which is of the form `src='data:image/svg+xml,$DATA'`. Note
+      how the SVG data is sanitized (`'` is replaced by its URL-equivalent `%22`)
+      so it won't corrupt the file.
+  
+
+  code-snippet(name='captionImgSrc')
+  code-snippet(name='captionImg-html')
+  
+  p
+    :markdown-it
+      And here is the final `<img/>` whose `src` is updated at each tick of the clock:
+  img#caption-img(:src='captionImgSrc', :width='gifWidth')
+
+  p
+    :markdown-it
+      If you don't have the *Anton* or *Impact* font on your computer, you'll
+      probably have a very different, *default* font appear in the animation above.
+      Again, this is because these pictures are generated by your browser using
+      a separate SVG renderer which doesn't have access to the fonts loaded in this
+      page. On the good news side, that renderer did take into account the 3D transforms,
+      although 3D transforms are not officially part of the SVG standard.
+      
+      Note that the incredible [CanVG](https://www.npmjs.com/package/canvg) library will
+      render SVGs on a canvas using fonts loaded in the page. However, CanVG is limited
+      to the standard SVG definition, and so won't take into account 3D transforms.
+
+  h3 Gif and caption come together
+
+
+
+  code-snippet(name='merge-gif-and-caption')
+  center
+    canvas#final-canvas(:width="gifWidth" :height="gifHeight")
+  
+
+
+
+  h3 Final step: rendering the GIF
+
+  p
+    :markdown-it
+      There are a couple Javascript frameworks for generating GIFs.
+      [GIF.js](https://jnordberg.github.io/gif.js/) is my favorite.
+      You first initialize a renderer, then send frames (images or canvas) to it,
+      and finally trigger the GIF rendering.
+      
+      For this demo we'll have the renderer's creation triggered with a button.
+
+  code-snippet(name='onRecordButtonClicked-html')
+
+  p
+    :markdown-it
+      When we create the renderer we set it up so that, upon completion, it writes the
+      final GIF's data into a `renderedGif` variable that is fed to an `<img>` element:
+  
+  code-snippet(name='onRecordButtonClicked')
+  code-snippet(name='rendered-gif-html')
+
+  p Then we modify the main loop so that every frame gets sent to the GIF renderer:
+
+  code-snippet(name='recording-main-loop')
+
+
+  p.
+    And when the GIF has played once in its entirety, the frame recording stops, and the
+    renderer can start actually generating the GIF. We do so by modifying the clock's loop
+
+  code-snippet(name='render-gif')
+  
+  
+
+  p.
+    That's it, we made it! Now press the button!
+    #[img.emoji(src='https://emojis.slackmojis.com/emojis/images/1584725500/8268/blob-hype.gif')]
+  center
+    button(
+      @click='onRecordButtonClicked'
+      :disabled='isRecording || isRendering'
+    ) Render the gif
+  p(v-if='isRecording') Recording the frames...
+  p(v-if='isRendering') Rendering the GIF...
+  p(v-if='renderedGif && !(isRecording || isRendering)') Here's your rendered GIF!
+
+  img(v-if='renderedGif' :src='renderedGif')
+  
+
+  h3 Conclusion
+
+  p
+    :markdown-it
+      I find it fascinating that browsers and JS frameworks have evolved to the point where
+      styling a GIF with CSS is possible. I was originally so excited
+      by this trick that I developed a full browser-based GIF captioning tool around it.
+      Midway through the project, I realized that the lack of font support and differences
+      in 3D transform renderings between browsers were going to be frustrating,
+      so I removed CSS-based animations altogether.
+
+      But now I have a web GIF editor called [Gix](https://zulko.github.io/gix) that runs
+      entirely in your browser, enables all kinds of GIF mixing and cropping and captioning
+      and animating, and lets you share your projects for others to remix, so you should
+      check it out! 
+
+
+
+
+</template>
+<script>
+import formatXML from 'xml-formatter';
+import gifFrames from 'gif-frames';
+import CodeSnippet from './CodeSnippet.vue';
+import inlineSVGStyle from './inlineSVGStyle.js';
+import GIF from 'gif.js';
+import gifWorker from 'url-loader!./gif.worker.txt'; // eslint-disable-line
+
+export default {
+  data() {
+    console.log(gifWorker);
+    console.log('bla');
+    return {
+      gifURL: 'https://i.imgur.com/BF230Z2.gif',
+      caption: 'CHEERS!',
+      captionX: 95,
+      captionY: 100,
+      gifWidth: 200,
+      gifHeight: 200,
+      gifDurationSeconds: 2,
+      frameSeconds: 0.05,
+      timeSeconds: 0,
+      showCaption: true,
+      elements: null,
+      captionSource: '',
+      isRecording: false,
+      isRendering: false,
+      gifRenderer: null,
+      renderedGif: null,
+    };
+  },
+  components: {
+    'code-snippet': CodeSnippet,
+  },
+  methods: {
+    setCaptionSource() {
+      const node = inlineSVGStyle.cloneWithInlineStyle(
+        this.elements.animatedCaption
+      );
+      this.captionSource = node.outerHTML;
+    },
+    onGifLoad() {
+      const self = this;
+      gifFrames(
+        {
+          url: self.gifURL,
+          frames: 'all',
+          outputType: 'canvas',
+          cumulative: true,
+        },
+        (_error, frameData) => {
+          console.log({ frameData });
+          let cumulativeTime = 0;
+          self.frameData = frameData.map(frame => {
+            cumulativeTime += frame.frameInfo.delay / 100;
+            return { untilTime: cumulativeTime, canvas: frame.getImage() };
+          });
+          self.gifWidth = self.frameData[0].canvas.width;
+          self.gifHeight = self.frameData[0].canvas.height;
+          self.gifDurationSeconds = cumulativeTime;
+        }
+      );
+    },
+    onRecordButtonClicked() {
+      const self = this;
+      this.gifRenderer = new GIF({
+        workers: 4,
+        workerScript: gifWorker,
+        quality: 1,
+        width: this.gifWidth,
+        height: this.gifHeight,
+        fps: 1.0 / this.frameSeconds,
+      });
+      this.gifRenderer.on('finished', blob => {
+        self.isRendering = false;
+        const reader = new window.FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => {
+          self.renderedGif = reader.result;
+        };
+      });
+      this.isRecording = true;
+      this.timeSeconds = -0.5;
+    },
+  },
+  computed: {
+    formattedCaptionSource() {
+      return formatXML(this.captionSource || '<xml></xml>');
+    },
+    captionImgSrc() {
+      const dataUrl = encodeURIComponent(
+        `<?xml version="1.0" encoding="UTF-8"?>
+        ${this.captionSource}`
+      )
+        .replace(/'/g, '%27')
+        .replace(/"/g, '%22');
+      return `data:image/svg+xml,${dataUrl}`;
+    },
+  },
+  mounted() {
+    const self = this;
+    setInterval(() => {
+      let newTime = self.timeSeconds + self.frameSeconds;
+      if (newTime > self.gifDurationSeconds) {
+        newTime -= self.gifDurationSeconds;
+        if (self.isRecording) {
+          self.isRecording = false;
+          self.isRendering = true;
+          self.gifRenderer.render();
+        }
+      }
+      self.timeSeconds = newTime;
+    }, 1000 * self.frameSeconds);
+    this.elements = {
+      gifImg: document.getElementById('gif-img'),
+      animatedCaption: document.getElementById('animated-caption'),
+      captionImg: document.getElementById('caption-img'),
+      finalCanvas: document.getElementById('final-canvas'),
+    };
+    const gifDrawCanvas = document.getElementById('gif-draw-canvas');
+    const gifDrawCanvasContext = gifDrawCanvas.getContext('2d');
+    setInterval(() => {
+      gifDrawCanvasContext.drawImage(this.elements.gifImg, 0, 0);
+    }, 2000);
+  },
+  watch: {
+    timeSeconds(t) {
+      const node = inlineSVGStyle.cloneWithInlineStyle(
+        this.elements.animatedCaption
+      );
+      this.captionSource = node.outerHTML;
+
+      const { finalCanvas, captionImg } = this.elements;
+      const frame = this.frameData.find(frame => frame.untilTime >= t);
+      const context = finalCanvas.getContext('2d');
+      context.drawImage(frame.canvas, 0, 0);
+      context.drawImage(captionImg, 0, 0);
+      if (this.isRecording && this.timeSeconds > 0) {
+        this.gifRenderer.addFrame(this.elements.finalCanvas, {
+          copy: true,
+          delay: Math.floor(1000 * this.frameSeconds),
+        });
+      }
+    },
+  },
+};
+</script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+.caption {
+  font-size: 60px;
+  font-family: Anton, Impact, sans-serif;
+  font-weight: bold;
+  fill: yellow;
+  stroke-width: 1.5;
+  stroke: black;
+  text-anchor: middle;
+  dominant-baseline: center;
+}
+.with-border {
+  border: 1px solid black;
+  display: block;
+  margin: 1em auto;
+}
+img, svg, input, pre {
+  display: block;
+  margin: 1.5em auto 1.5em auto !important;
+}
+
+.number {
+  background-color: inherit !important;
+  font-size: inherit !important;
+  margin: inherit !important;
+  padding: inherit !important;
+  height: inherit !important;
+}
+.caption-source {
+  max-width: 100%;
+  font-size: 10px;
+  color: darkblue;
+  overflow-y: scroll;
+  height: 270px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+#gif-frames-canvas {
+  border: 1px solid black;
+}
+button {
+  width: auto !important;
+}
+.emoji {
+  display: inline-block;
+  height: 1.5em;
+}
+</style>

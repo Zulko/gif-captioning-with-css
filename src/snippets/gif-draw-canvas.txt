@@ -1,0 +1,8 @@
+mounted() {
+  const gifDrawCanvas = document.getElementById('gif-draw-canvas');
+  const gifDrawCanvasContext = gifDrawCanvas.getContext('2d');
+  // Refresh the canvas by projecting the GIF every 2 seconds
+  setInterval(() => {
+    gifDrawCanvasContext.drawImage(this.elements.gifImg, 0, 0);
+  }, 2000);
+}

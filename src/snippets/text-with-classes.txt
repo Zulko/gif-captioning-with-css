@@ -1,0 +1,7 @@
+<svg>
+  <g>
+    <text class="caption animate__animated animate__jackInTheBox">
+      CHEERS!
+    </text>
+  </g>
+</svg>

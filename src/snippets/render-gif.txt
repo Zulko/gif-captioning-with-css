@@ -1,0 +1,12 @@
+setInterval(() => {
+  let newTime = self.timeSeconds + self.frameSeconds;
+  if (newTime > self.gifDurationSeconds) {
+    newTime -= self.gifDurationSeconds;
+    if (self.isRecording) {
+      self.isRecording = false;
+      self.isRendering = true;
+      self.gifRenderer.render();
+    }
+  }
+   self.timeSeconds = newTime;
+  }, 1000 * self.frameSeconds);

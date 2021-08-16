@@ -1,0 +1,13 @@
+watch: {
+  timeSeconds(t) {
+    ...
+    context.drawImage(frame.canvas, 0, 0);
+    context.drawImage(captionImg, 0, 0);
+    if (this.isRecording && this.timeSeconds > 0) {
+      this.gifRenderer.addFrame(this.elements.finalCanvas, {
+        copy: true,
+        delay: Math.floor(1000 * this.frameSeconds),
+      });
+    }
+  }
+}

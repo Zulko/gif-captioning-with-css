@@ -1,0 +1,10 @@
+mounted() {
+  const self = this;
+  setInterval(() => {
+    let newTime = self.timeSeconds + self.frameSeconds;
+    if (newTime > self.gifDurationSeconds) {
+      newTime -= self.gifDurationSeconds; // rewind to the start
+    }
+    self.timeSeconds = newTime;
+  }, 1000 * self.frameSeconds);
+}

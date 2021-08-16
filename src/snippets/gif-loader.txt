@@ -1,0 +1,24 @@
+import gifFrames from 'gif-frames';
+
+function onGifLoad() {
+  const self = this;
+  gifFrames(
+    {
+      url: self.gifURL,
+      frames: 'all',
+      outputType: 'canvas',
+      cumulative: true,
+    },
+    (_error, frameData) => {
+      console.log({ frameData });
+      let cumulativeTime = 0;
+      self.frameData = frameData.map(frame => {
+        cumulativeTime += frame.frameInfo.delay / 100;
+        return { untilTime: cumulativeTime, canvas: frame.getImage() };
+      });
+      self.gifWidth = self.frameData[0].canvas.width;
+      self.gifHeight = self.frameData[0].canvas.height;
+      self.gifDurationSeconds = cumulativeTime;
+    }
+  );
+}
