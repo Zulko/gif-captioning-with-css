@@ -2,7 +2,7 @@
 #app
   page-content
   .footer.
-    Copyright Zulko 2021 - This page's code is #[a(href='#') on Github]
+    Copyright Zulko 2021 - This page's code is #[a(href='https://github.com/Zulko/gif-captioning-with-css') on Github]
     and published under the MIT licence.
 </template>
 
