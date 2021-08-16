@@ -1,24 +1,15 @@
 # browser_gif_captioning
 
-## Project setup
-```
-npm install
-```
+Did you know you can add CSS-animated text to a GIF, all in your browser?
+This page shows you how.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+<img src='public/finalResult.gif' style='display: block; margin: 1em auto'/>
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## Running locally
 
-### Lints and fixes files
-```
-npm run lint
-```
+With Yarn:
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+```
+yarn install
+yarn serve
+```
