@@ -213,9 +213,10 @@
 
   code-snippet(name='computed-style')
 
-  p.
-    Then you apply the method above recursively to all the components of your SVG
-    (#[code g], #[text], etc):
+  p
+    :markdown-it
+      Then you apply the method above recursively to all the components of your SVG
+      (`<g>`, `<text>`, etc):
   
   code-snippet(name='inline-style')
   
@@ -224,7 +225,7 @@
 
   code-snippet(name='compute-style-loop')
 
-  p Here is a rendition of #[code captionSource]
+  p Here is a rendition of #[code captionSource]:
 
   pre
     code.caption-source {{formattedCaptionSource}}
@@ -243,6 +244,7 @@
   p
     :markdown-it
       And here is the final `<img/>` whose `src` is updated at each tick of the clock:
+
   img#caption-img(:src='captionImgSrc', :width='gifWidth')
 
   p
@@ -259,7 +261,7 @@
       render SVGs on a canvas using fonts loaded in the page. However, CanVG is limited
       to the standard SVG definition, and so won't take into account 3D transforms.
 
-  h3 Gif and caption come together
+  h3 GIF and caption come together
 
   p
     :markdown-it
