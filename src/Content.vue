@@ -302,14 +302,14 @@
 
   p.
     And when the GIF has played once in its entirety, the frame recording stops, and the
-    renderer can start actually generating the GIF. We do so by modifying the clock's loop
+    renderer can start actually generating the GIF. We do so by modifying the clock's loop:
 
   code-snippet(name='render-gif')
   
   
 
   p.
-    That's it, we made it! Now press the button!
+    That's it, we made it! Press the button!
     #[img.emoji(src='https://emojis.slackmojis.com/emojis/images/1584725500/8268/blob-hype.gif')]
   center
     button(
@@ -327,15 +327,14 @@
 
   p
     :markdown-it
-      I find it fascinating that browsers and JS frameworks have evolved to the point where
-      styling a GIF with CSS is possible, to the point where I started a browser-based
-      GIF captioning tool around this trick.
+      It is fascinating that browsers and JS frameworks have evolved to the point where
+      styling a GIF with CSS is possible. Some time ago I started developing a browser-based
+      GIF captioning app around this trick, but as the project went forth I realized
+      the lack of font support and differences
+      in 3D transform renderings between browsers were going to be frustrating.
+      So I removed the CSS animation feature altogether, and created this demo page instead.
       
-      Midway through the project though, I realized that the lack of font support and differences
-      in 3D transform renderings between browsers were going to be frustrating,
-      so I removed CSS-based animations altogether, and created this page instead.
-      
-      On the bright side, now I have a web GIF editor that runs
+      On the bright side, this got me started on a new GIF editor that runs
       entirely in your browser, enables all kinds of GIF mixing and cropping and captioning
       and animating, and lets you share your projects for others to remix. It's called
       [Gix and you should totally check it out](https://zulko.github.io/gix).
