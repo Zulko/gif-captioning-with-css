@@ -16,6 +16,7 @@
     "url-loader": "^4.1.1",
     "vue": "^2.6.11",
     "vue-code-highlight": "^0.7.8",
+    "vue-social-sharing": "^3.0.8",
     "xml-formatter": "^2.4.0"
   },
   "devDependencies": {
