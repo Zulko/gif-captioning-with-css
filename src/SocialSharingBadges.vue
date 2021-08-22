@@ -21,7 +21,7 @@ export default {
   data() {
     return {
       sharing: {
-        url: 'https://news.vuejs.org/issues/180',
+        url: 'https://zulko.github.io/gif-captioning-with-css/',
         title: 'In-browser GIF captioning with 3D CSS animations',
         description: "Let's put some CSS animations in a GIF!",
         quote: 'https://zulko.github.io/gif-captioning-with-css/',
